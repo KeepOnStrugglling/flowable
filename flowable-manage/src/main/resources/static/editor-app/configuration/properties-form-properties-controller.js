@@ -12,15 +12,15 @@
  */
 
 /*
- * Data Properties
+ * Form Properties
  */
 
-angular.module('flowableModeler').controller('FlowableDataPropertiesCtrl',
+angular.module('flowableModeler').controller('FlowableFormPropertiesCtrl',
     ['$scope', '$modal', '$timeout', '$translate', function ($scope, $modal, $timeout, $translate) {
 
         // Config for the modal window
         var opts = {
-            template: 'editor-app/configuration/properties/data-properties-popup.html?version=' + Date.now(),
+            template: 'editor-app/configuration/properties/form-properties-popup.html?version=' + Date.now(),
             scope: $scope
         };
 
@@ -28,22 +28,22 @@ angular.module('flowableModeler').controller('FlowableDataPropertiesCtrl',
         _internalCreateModal(opts, $modal, $scope);
     }]);
 
-angular.module('flowableModeler').controller('FlowableDataPropertiesPopupCtrl',
+angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
     ['$scope', '$q', '$translate', '$timeout', function ($scope, $q, $translate, $timeout) {
 
-        // Put json representing data properties on scope
+        // Put json representing form properties on scope
         if ($scope.property.value !== undefined && $scope.property.value !== null
-            && $scope.property.value.items !== undefined
-            && $scope.property.value.items !== null) {
+            && $scope.property.value.formProperties !== undefined
+            && $scope.property.value.formProperties !== null) {
             // Note that we clone the json object rather then setting it directly,
-            // this to cope with the fact that the user can click the cancel button and no changes should have happened
-            $scope.dataProperties = angular.copy($scope.property.value.items);
+            // this to cope with the fact that the user can click the cancel button and no changes should have happended
+            $scope.formProperties = angular.copy($scope.property.value.formProperties);
             
-            for (var i = 0; i < $scope.dataProperties.length; i++) {
-			    var dataProperty = $scope.dataProperties[i];
-			    if (dataProperty.enumValues && dataProperty.enumValues.length > 0) {
-				    for (var j = 0; j < dataProperty.enumValues.length; j++) {
-					    var enumValue = dataProperty.enumValues[j];
+            for (var i = 0; i < $scope.formProperties.length; i++) {
+			    var formProperty = $scope.formProperties[i];
+			    if (formProperty.enumValues && formProperty.enumValues.length > 0) {
+				    for (var j = 0; j < formProperty.enumValues.length; j++) {
+					    var enumValue = formProperty.enumValues[j];
 					    if (!enumValue.id && !enumValue.name && enumValue.value) {
 						    enumValue.id = enumValue.value;
 						    enumValue.name = enumValue.value;
@@ -53,7 +53,7 @@ angular.module('flowableModeler').controller('FlowableDataPropertiesPopupCtrl',
 			}
             
         } else {
-            $scope.dataProperties = [];
+            $scope.formProperties = [];
         }
         
         $scope.enumValues = [];
@@ -62,21 +62,19 @@ angular.module('flowableModeler').controller('FlowableDataPropertiesPopupCtrl',
 
         $scope.labels = {};
 
-        var idPromise = $translate('PROPERTY.DATAPROPERTIES.ID');
-        var namePromise = $translate('PROPERTY.DATAPROPERTIES.NAME');
-        var typePromise = $translate('PROPERTY.DATAPROPERTIES.TYPE');
-        var valuePromise = $translate('PROPERTY.DATAPROPERTIES.VALUE');
+        var idPromise = $translate('PROPERTY.FORMPROPERTIES.ID');
+        var namePromise = $translate('PROPERTY.FORMPROPERTIES.NAME');
+        var typePromise = $translate('PROPERTY.FORMPROPERTIES.TYPE');
 
-        $q.all([idPromise, namePromise, typePromise, valuePromise]).then(function (results) {
+        $q.all([idPromise, namePromise, typePromise]).then(function (results) {
             $scope.labels.idLabel = results[0];
             $scope.labels.nameLabel = results[1];
             $scope.labels.typeLabel = results[2];
-            $scope.labels.valueLabel = results[3];
             $scope.translationsRetrieved = true;
 
             // Config for grid
             $scope.gridOptions = {
-                data: $scope.dataProperties,
+                data: $scope.formProperties,
                 headerRowHeight: 28,
                 enableRowSelection: true,
                 enableRowHeaderSelection: false,
@@ -85,10 +83,9 @@ angular.module('flowableModeler').controller('FlowableDataPropertiesPopupCtrl',
                 enableHorizontalScrollbar: 0,
                 enableColumnMenus: false,
                 enableSorting: false,
-                columnDefs: [{field: 'dataproperty_id', displayName: $scope.labels.idLabel},
-                    {field: 'dataproperty_name', displayName: $scope.labels.nameLabel},
-                    {field: 'dataproperty_type', displayName: $scope.labels.typeLabel},
-                    {field: 'dataproperty_value', displayName: $scope.labels.valueLabel}]
+                columnDefs: [{field: 'id', displayName: $scope.labels.idLabel},
+                    {field: 'name', displayName: $scope.labels.nameLabel},
+                    {field: 'type', displayName: $scope.labels.typeLabel}]
             };
             
             $scope.enumGridOptions = {
@@ -139,8 +136,8 @@ angular.module('flowableModeler').controller('FlowableDataPropertiesPopupCtrl',
                 delete $scope.selectedProperty.datePattern;
             }
 
-            // Check enum. If enum, show list of options
-            if ($scope.selectedProperty.type === 'enum') {
+            // Check enums. If enums, show list of options
+            if ($scope.selectedProperty.type === 'enums') {
                 $scope.selectedProperty.enumValues = [ {id: 'value1', name: 'Value 1'}, {id: 'value2', name: 'Value 2'}];
                 $scope.enumValues.length = 0;
                 for (var i = 0; i < $scope.selectedProperty.enumValues.length; i++) {
@@ -157,14 +154,14 @@ angular.module('flowableModeler').controller('FlowableDataPropertiesPopupCtrl',
         var propertyIndex = 1;
         $scope.addNewProperty = function () {
             var newProperty = {
-                dataproperty_id: 'new_data_object_' + propertyIndex++,
-                dataproperty_name: '',
-                dataproperty_type: 'string',
+                id: 'new_property_' + propertyIndex++,
+                name: '',
+                type: 'string',
                 readable: true,
                 writable: true
             };
 
-            $scope.dataProperties.push(newProperty);
+            $scope.formProperties.push(newProperty);
 
             $timeout(function () {
                 $scope.gridApi.selection.toggleRowSelection(newProperty);
@@ -175,17 +172,17 @@ angular.module('flowableModeler').controller('FlowableDataPropertiesPopupCtrl',
         $scope.removeProperty = function () {
             var selectedItems = $scope.gridApi.selection.getSelectedRows();
             if (selectedItems && selectedItems.length > 0) {
-                var index = $scope.dataProperties.indexOf(selectedItems[0]);
+                var index = $scope.formProperties.indexOf(selectedItems[0]);
                 $scope.gridApi.selection.toggleRowSelection(selectedItems[0]);
-                $scope.dataProperties.splice(index, 1);
+                $scope.formProperties.splice(index, 1);
 
-                if ($scope.dataProperties.length == 0) {
+                if ($scope.formProperties.length == 0) {
                     $scope.selectedProperty = undefined;
                 }
 
                 $timeout(function() {
-                    if ($scope.dataProperties.length > 0) {
-                        $scope.gridApi.selection.toggleRowSelection($scope.dataProperties[0]);
+                    if ($scope.formProperties.length > 0) {
+                        $scope.gridApi.selection.toggleRowSelection($scope.formProperties[0]);
                     }
                 });
             }
@@ -195,12 +192,12 @@ angular.module('flowableModeler').controller('FlowableDataPropertiesPopupCtrl',
         $scope.movePropertyUp = function () {
             var selectedItems = $scope.gridApi.selection.getSelectedRows();
             if (selectedItems && selectedItems.length > 0) {
-                var index = $scope.dataProperties.indexOf(selectedItems[0]);
+                var index = $scope.formProperties.indexOf(selectedItems[0]);
                 if (index != 0) { // If it's the first, no moving up of course
-                    var temp = $scope.dataProperties[index];
-                    $scope.dataProperties.splice(index, 1);
+                    var temp = $scope.formProperties[index];
+                    $scope.formProperties.splice(index, 1);
                     $timeout(function(){
-                        $scope.dataProperties.splice(index + -1, 0, temp);
+                        $scope.formProperties.splice(index + -1, 0, temp);
                         $timeout(function() {
                             $scope.gridApi.selection.toggleRowSelection(temp);
                         });
@@ -213,12 +210,12 @@ angular.module('flowableModeler').controller('FlowableDataPropertiesPopupCtrl',
         $scope.movePropertyDown = function () {
             var selectedItems = $scope.gridApi.selection.getSelectedRows();
             if (selectedItems && selectedItems.length > 0) {
-                var index = $scope.dataProperties.indexOf(selectedItems[0]);
-                if (index != $scope.dataProperties.length - 1) { // If it's the last element, no moving down of course
-                    var temp = $scope.dataProperties[index];
-                    $scope.dataProperties.splice(index, 1);
+                var index = $scope.formProperties.indexOf(selectedItems[0]);
+                if (index != $scope.formProperties.length - 1) { // If it's the last element, no moving down of course
+                    var temp = $scope.formProperties[index];
+                    $scope.formProperties.splice(index, 1);
                     $timeout(function(){
-                        $scope.dataProperties.splice(index + 1, 0, temp);
+                        $scope.formProperties.splice(index + 1, 0, temp);
                         $timeout(function() {
                             $scope.gridApi.selection.toggleRowSelection(temp);
                         });
@@ -304,9 +301,9 @@ angular.module('flowableModeler').controller('FlowableDataPropertiesPopupCtrl',
         // Click handler for save button
         $scope.save = function () {
 
-            if ($scope.dataProperties.length > 0) {
+            if ($scope.formProperties.length > 0) {
                 $scope.property.value = {};
-                $scope.property.value.items = $scope.dataProperties;
+                $scope.property.value.formProperties = $scope.formProperties;
             } else {
                 $scope.property.value = null;
             }
