@@ -36,8 +36,11 @@ public enum ReturnCode {
     NULL_POINTER(10002,"空指针异常"),
 
     /* 11 表示模型模块异常*/
+    MODEL_COMMON_ERROR(11000,"流程常规错误"),
     MODEL_ID_NULL(11001,"模板id不能为空"),
     MODEL_DEPLOY_ERROR(11002,"流程部署错误"),
+    MODEL_IMPORT_ERROR(11003,"流程文件导入错误"),
+
 
 
     /* 12 表示流程定义模块异常*/

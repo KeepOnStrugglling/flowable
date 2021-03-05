@@ -1,6 +1,7 @@
 package com.javatest.flowable.service;
 
 import com.javatest.flowable.common.page.PageUtils;
+import com.javatest.flowable.common.response.Result;
 import org.flowable.ui.modeler.domain.AbstractModel;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,5 +14,5 @@ import java.util.List;
  */
 public interface FlowModelService {
 
-    void importProcessModel(MultipartFile file);
+    Result importProcessModel(MultipartFile file);
 }
