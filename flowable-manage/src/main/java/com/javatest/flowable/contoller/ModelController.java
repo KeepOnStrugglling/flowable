@@ -1,10 +1,10 @@
 package com.javatest.flowable.contoller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.javatest.flowable.common.enums.ReturnCode;
 import com.javatest.flowable.common.page.PageUtils;
 import com.javatest.flowable.common.response.Result;
 import com.javatest.flowable.service.FlowModelService;
+import com.javatest.flowable.service.impl.FlowProcessDiagramGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.BpmnModel;
@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,8 @@ public class ModelController {
     private IdentityService identityService;
     @Autowired
     private FlowModelService flowModelService;
+    @Autowired
+    private FlowProcessDiagramGenerator flowProcessDiagramGenerator;
 
     /**
      * 分页查询所有接口
@@ -60,7 +64,7 @@ public class ModelController {
     }
 
     /**
-     * 导入bpmn模型
+     * 导入bpmn模型(bpmn文件)
      */
     @PostMapping(value = "/import-process-model")
     public Result importProcessModel(@RequestParam("file") MultipartFile file) {
@@ -73,7 +77,7 @@ public class ModelController {
     }
 
     /**
-     * 根据modelid加载xml
+     * 根据modelid加载xml(返回xml文件的字节流)
      */
     @GetMapping(value = "/loadXmlByModelId/{modelId}")
     public void loadXmlByModelId(@PathVariable String modelId, HttpServletResponse response) {
@@ -99,12 +103,12 @@ public class ModelController {
         Deployment deploy = null;
         try {
             Model model = modelService.getModel(modelId.trim());
-            //到时候需要添加分类
-            String categoryCode = "1000";
+            // TODO 后续根据需求追加添加分类
+            String categoryCode = "";
             BpmnModel bpmnModel = modelService.getBpmnModel(model);
-            //添加隔离信息
+            // 添加隔离信息，可用于多用户隔离
             String tenantId = "flow";
-            //必须指定文件后缀名否则部署不成功
+            // 必须指定文件后缀名否则部署不成功
             deploy = repositoryService.createDeployment()
                     .name(model.getName())
                     .key(model.getKey())
@@ -117,5 +121,26 @@ public class ModelController {
             return Result.fail(ReturnCode.MODEL_DEPLOY_ERROR);
         }
         return Result.success(deploy.getId());
+    }
+
+    /**
+     * 根据模型id加载流程图到页面
+     */
+    @GetMapping(value = "/loadPngByModelId/{modelId}")
+    public void loadPngByModelId(@PathVariable String modelId, HttpServletResponse response) {
+        Model model = modelService.getModel(modelId);
+        BpmnModel bpmnModel = modelService.getBpmnModel(model, new HashMap<>(), new HashMap<>());
+        InputStream is = flowProcessDiagramGenerator.generateDiagram(bpmnModel);
+        try {
+            response.setHeader("Content-Type", "image/png");
+            byte[] b = new byte[1024];
+            int len;
+            while ((len = is.read(b, 0, 1024)) != -1) {
+                response.getOutputStream().write(b, 0, len);
+            }
+        } catch (Exception e) {
+            log.error("ApiFlowableModelResource-loadPngByModelId:" + e);
+            e.printStackTrace();
+        }
     }
 }

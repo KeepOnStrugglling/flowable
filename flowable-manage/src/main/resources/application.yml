@@ -29,6 +29,11 @@ flowable:
     app:
       rest-enabled: true
   database-schema-update: false
+  #配置
+  activityFontName: \u5B8B\u4F53
+  labelFontName: \u5B8B\u4F53
+  annotationFontName: \u5B8B\u4F53
+
 mybatis:
   mapper-locations: classpath:/META-INF/modeler-mybatis-mappings/*.xml
   typeAliasesPackage: com.javatest.flowable.po
