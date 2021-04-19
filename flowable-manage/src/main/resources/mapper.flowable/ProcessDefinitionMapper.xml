@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.javatest.flowable.dao.ProcessDefinitionDao">
+    <select id="getPagerModel" parameterType="com.javatest.flowable.entity.vo.ProcessDefinitionQueryVo"
+            resultType="com.javatest.flowable.entity.vo.ProcessDefinitionVo">
+        SELECT
+        t.CATEGORY_ AS category,
+        t.ID_ AS id,
+        t.NAME_ AS NAME,
+        t.KEY_ AS modelKey,
+        t.RESOURCE_NAME_ AS resourceName,
+        t.DGRM_RESOURCE_NAME_ as dgrmResourceName,
+        t.SUSPENSION_STATE_ as suspensionState,
+        t.VERSION_ AS version,
+        t.DEPLOYMENT_ID_ AS deploymentId,
+        t.TENANT_ID_ AS tenantId
+        FROM
+        act_re_procdef t
+        <where>
+            <if test="params.name!=null and params.name!=''">
+                and LOCATE(#{params.name},t.NAME_)>0
+            </if>
+            <if test="params.modelKey!=null and params.modelKey!=''">
+                or LOCATE(#{params.modelKey},.KEY_)>0
+            </if>
+        </where>
+        ORDER BY
+        t.VERSION_ DESC
+    </select>
+
+    <select id="getById" parameterType="java.lang.String"
+            resultType="com.javatest.flowable.entity.vo.ProcessDefinitionVo">
+        SELECT
+        t.CATEGORY_ AS category,
+        t.ID_ AS id,
+        t.NAME_ AS NAME,
+        t.KEY_ AS modelKey,
+        t.RESOURCE_NAME_ AS resourceName,
+        t.DGRM_RESOURCE_NAME_ as dgrmResourceName,
+        t.SUSPENSION_STATE_ as suspensionState,
+        t.VERSION_ AS version,
+        t.DEPLOYMENT_ID_ AS deploymentId,
+        t.TENANT_ID_ AS tenantId
+        FROM
+        act_re_procdef t
+        where t.ID_ = #{processDefinitionId}
+    </select>
+
+</mapper>

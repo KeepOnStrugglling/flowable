@@ -46,6 +46,14 @@ public class Constant {
      */
     public static final Integer DELETED = 1;
 
+    /**
+     * 挂起状态
+     */
+    public static final Integer STATUS_RUN = 0;
+    /**
+     * 挂起状态
+     */
+    public static final Integer STATUS_HANGON = 1;
 
 
 
