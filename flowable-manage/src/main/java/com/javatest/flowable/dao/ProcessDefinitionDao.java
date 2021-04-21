@@ -1,10 +1,11 @@
 package com.javatest.flowable.dao;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.javatest.flowable.entity.vo.ProcessDefinitionQueryVo;
 import com.javatest.flowable.entity.vo.ProcessDefinitionVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author: Javen
@@ -17,7 +18,7 @@ public interface ProcessDefinitionDao {
     /**
      * 条件查询流程定义列表
      */
-    Page<ProcessDefinitionVo> getPagerModel(@Param("params") ProcessDefinitionQueryVo params);
+    List<ProcessDefinitionVo> getPagerModel(@Param("params") ProcessDefinitionQueryVo params);
 
     ProcessDefinitionVo getById(String processDefinitionId);
 }

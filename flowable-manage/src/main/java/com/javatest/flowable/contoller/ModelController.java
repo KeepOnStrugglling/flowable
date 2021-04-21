@@ -34,7 +34,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("model")
 @Slf4j
-public class ModelController {
+public class ModelController extends BaseController {
 
     @Autowired
     private ModelService modelService;

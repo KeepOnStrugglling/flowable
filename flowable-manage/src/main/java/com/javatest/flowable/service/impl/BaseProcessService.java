@@ -3,10 +3,12 @@ package com.javatest.flowable.service.impl;
 import com.javatest.flowable.dao.BaseProcessDao;
 import com.javatest.flowable.entity.vo.CommentVo;
 import com.javatest.flowable.service.CommentService;
+import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.editor.language.json.converter.util.CollectionUtils;
 import org.flowable.engine.*;
 import org.flowable.engine.impl.persistence.entity.ActivityInstanceEntity;
 import org.flowable.engine.runtime.ActivityInstance;
+import org.flowable.idm.api.User;
 import org.flowable.task.service.impl.persistence.entity.TaskEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,6 +144,26 @@ public abstract class BaseProcessService {
 
     protected TaskEntity createSubTask(TaskEntity ptask, String assignee) {
         return this.createSubTask(ptask, ptask.getId(), assignee);
+    }
+
+    /**
+     * 组合审批人显示名称
+     * @param approvers 审批人列表
+     */
+    protected String createApprovers(List<User> approvers) {
+        if (CollectionUtils.isNotEmpty(approvers)) {
+            StringBuffer approverstr = new StringBuffer();
+            StringBuffer finalApproverstr = approverstr;
+            for (int i = 0; i < approvers.size(); i++) {
+                User user = approvers.get(i);
+                finalApproverstr.append(user.getDisplayName()).append(";");
+            }
+            if (approverstr.length() > 0) {
+                approverstr = approverstr.deleteCharAt(approverstr.length() - 1);
+            }
+            return approverstr.toString();
+        }
+        return null;
     }
 
 }

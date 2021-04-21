@@ -1,9 +1,8 @@
 package com.javatest.flowable.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.javatest.flowable.common.constant.Constant;
-import com.javatest.flowable.common.page.PageUtils;
 import com.javatest.flowable.common.response.Result;
 import com.javatest.flowable.dao.ProcessDefinitionDao;
 import com.javatest.flowable.entity.vo.ProcessDefinitionQueryVo;
@@ -11,6 +10,8 @@ import com.javatest.flowable.entity.vo.ProcessDefinitionVo;
 import com.javatest.flowable.service.ProcessDefinitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author: Javen
@@ -35,10 +36,10 @@ public class ProcessDefinitionServiceImpl extends BaseProcessService implements 
     }
 
     @Override
-    public PageUtils getPagerModel(ProcessDefinitionQueryVo params) {
-        Page<ProcessDefinitionQueryVo> page = new Page<>(params.getCurPage(),params.getLimit());
-        IPage<ProcessDefinitionVo> list = processDefinitionDao.getPagerModel(params);
-        return new PageUtils(list);
+    public PageInfo<ProcessDefinitionVo> getPagerModel(ProcessDefinitionQueryVo params) {
+        PageHelper.startPage(params.getCurPage(),params.getLimit());
+        List<ProcessDefinitionVo> list = processDefinitionDao.getPagerModel(params);
+        return new PageInfo<>(list);
     }
 
     @Override

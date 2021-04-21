@@ -1,6 +1,6 @@
 package com.javatest.flowable.service;
 
-import com.javatest.flowable.common.page.PageUtils;
+import com.github.pagehelper.PageInfo;
 import com.javatest.flowable.common.response.Result;
 import com.javatest.flowable.entity.vo.ProcessDefinitionQueryVo;
 import com.javatest.flowable.entity.vo.ProcessDefinitionVo;
@@ -14,7 +14,7 @@ public interface ProcessDefinitionService {
 
     Result suspendOrActivateProcessDefinitionById(String id, int suspensionState);
 
-    PageUtils getPagerModel(ProcessDefinitionQueryVo params);
+    PageInfo<ProcessDefinitionVo> getPagerModel(ProcessDefinitionQueryVo params);
 
     ProcessDefinitionVo getById(String id);
 }

@@ -21,7 +21,7 @@ import java.io.InputStream;
 @RestController
 @RequestMapping("definition")
 @Slf4j
-public class ProcessDefinitionController {
+public class ProcessDefinitionController extends BaseController {
 
     @Autowired
     private ProcessDefinitionService processDefinitionService;

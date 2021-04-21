@@ -34,6 +34,7 @@ public enum ReturnCode {
     /* 10 表示通用异常，比如校验异常等*/
     PARAM_VALID_EXCEPTION(10001,"参数格式校验失败"),
     NULL_POINTER(10002,"空指针异常"),
+    PARAM_NOT_COMPLETE(10003,"参数不完整"),
 
     /* 11 表示模型模块异常*/
     MODEL_COMMON_ERROR(11000,"流程常规错误"),
@@ -47,6 +48,10 @@ public enum ReturnCode {
 
 
     /* 13 表示流程实例模块异常*/
+    INSTANCE_STOP_PROCESS_ERROR(13001,"流程已挂起，请联系管理员激活!"),
+    INSTANCE_PROCESS_NOT_FOUND(13002,"不存在运行的流程实例"),
+    INSTANCE_PROCESS_ALREADY_HANG_ON(13003,"此流程已经挂起"),
+    INSTANCE_ID_NULL(13004,"流程id不能为空"),
 
     /* 14 表示任务模块异常*/
 

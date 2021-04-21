@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 public class PageParams {
 
-    private Long curPage;
+    private Integer curPage;
 
-    private Long limit;
+    private Integer limit;
 
     private String sidx;
 
